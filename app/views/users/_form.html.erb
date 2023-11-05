@@ -1,0 +1,60 @@
+<div class="center_area">
+  <div class="form_area">
+    <h2>Sign up</h2>
+
+    <%= form_with model: @user do |f| %>
+      <div class="form_field">
+        <span style="color: red;">* Required fields.</span>
+      </div>
+      <div class="form_field">
+        <%= f.label :email, 'E-mail: *' %>
+        <%= f.email_field :email %>
+        <% if @user.errors.messages_for(:email).any? %>
+          <div class="invalid-feedback" style="display: inline;">
+            <%= @user.errors.messages_for(:email).to_sentence %>
+          </div>
+        <% end %>
+      </div>
+      <div class="form_field">
+        <%= f.label :name, 'Name: *' %>
+        <%= f.text_field :name %>
+        <% if @user.errors.messages_for(:name).any? %>
+          <div class="invalid-feedback" style="display: inline;">
+            <%= @user.errors.messages_for(:name).to_sentence %>
+          </div>
+        <% end %>
+      </div>
+      <div class="form_field">
+        <%= f.label :company, 'Filiation/company:' %>
+        <%= f.text_field :company %>
+        <% if @user.errors.messages_for(:company).any? %>
+          <div class="invalid-feedback" style="display: inline;">
+            <%= @user.errors.messages_for(:company).to_sentence %>
+          </div>
+        <% end %>
+      </div>
+      <div class="form_field">
+        <%= f.label :password, 'Password:' %>
+        <%= f.password_field :password %>
+        <% if @user.errors.messages_for(:password).any? %>
+          <div class="invalid-feedback" style="display: inline;">
+            <%= @user.errors.messages_for(:password).to_sentence %>
+          </div>
+        <% end %>
+      </div>
+      <div class="form_field">
+        <%= f.label :password_confirmation, 'Password confirmation:' %>
+        <%= f.password_field :password_confirmation %>
+        <% if @user.errors.messages_for(:password_confirmation).any? %>
+          <div class="invalid-feedback" style="display: inline;">
+            <%= @user.errors.messages_for(:password_confirmation).to_sentence %>
+          </div>
+        <% end %>
+      </div>
+      <div class="form_buttons">
+        <%= f.submit 'Register', { :class => :button_default } %>
+        <%= link_to '<button type="button">Back to Log in</button>'.html_safe, session_index_url %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CityZones Web App</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="https://kit.fontawesome.com/6836d4b5c9.js" crossorigin="anonymous"></script>
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <div class="top_bar">
+        <div class="title">
+          CityZones Web
+          <span style="font-size: 0.7em; font-weight: normal;">
+            <br>
+            <%= @page_title.present? ? @page_title : '' %>
+          </span>
+        </div>
+
+        <div class="nav">
+          <% if logged_in? %>
+            <%= link_to 'Map', new_task_url %>
+            <%= link_to 'Tasks', tasks_url %>
+
+            <% if current_user.admin %>
+              <%= link_to 'Workers', admin_workers_url %>
+            <% end %>
+
+            <%= link_to 'Profile', edit_user_url(current_user.id) %>
+          <% else %>
+            <%= link_to 'Login', session_index_url %>
+          <% end %>
+
+          <%= link_to 'Help', page_url('help') %>
+          <%= link_to 'About', page_url('about') %>
+
+          <% if logged_in? %>
+            <%= link_to 'Logout', session_url(session[:session_id]), {
+                data: {
+                  turbo_method: :delete,
+                  turbo_confirm: 'Logout?'
+                }
+              } %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="messages">
+        <section class="messages">
+          <% if flash[:message].present? %>
+            <div class="info_msg"><%= flash[:message] %></div>
+          <% end %>
+          <% if flash[:notice].present? %>
+            <div class="error_msg"><%= flash[:notice] %></div>
+          <% end %>
+        </section>
+      </div>
+
+      <div class="content">
+        <%= yield %>
+      </div>
+    </div>
+  </body>
+</html>

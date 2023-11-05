@@ -1,0 +1,246 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+<script src="https://cdn.bootcss.com/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+
+<div class="map_ui">
+  <div id="map"></div>
+
+  <div class="results_list">
+    <div class="results_table">
+      <table cellspacing="0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Submitted at</th>
+            <th>Started at</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @tasks.each do |task| %>
+            <tr class="result_item" style="border-top: 1px solid;" onmouseover=<%= "show_marker(#{task.lat},#{task.lon});" %> onmouseout="clear_marker();">
+              <td class="result_cell"><%= task.id %></td>
+              <td class="result_cell"><%= task.created_at.strftime('%d/%m/%Y %H:%M') %></td>
+              <td class="result_cell"><%= task.requested_at.present? ? task.requested_at.strftime('%d/%m/%Y %H:%M') : '-' %></td>
+              <td class="result_cell">
+                <% if task.result.present? %>
+                  <span class="status_done">Done</span>
+                <% elsif task.failed? %>
+                  <span class="status_failed">Failed</span>  
+                <% elsif task.expired? %>
+                  <span class="status_expired">Expired, back on queue</span>
+                <% elsif task.requested_at.present? %>
+                  <span class="status_processing">Processing...</span>
+                <% else %>
+                  <span class="status_queue">Queued</span>
+                <% end %>
+              </td>
+              <td class="result_cell" style="text-align: right">
+                <% if task.result.present? %>
+                  <% if task.result.res_data_to_json['n_zones'] >= 1000000 %>
+                    <% button_text = 'Show map ⚠️' %>
+                  <% else %>
+                    <% button_text = 'Show map' %>
+                  <% end %>
+                  <%= button_tag button_text, { :id => "btn_#{task.id}", :onclick => "get_data(#{task.id});" } %>
+                  &nbsp;<%= link_to '<i class="fa-solid fa-cloud-arrow-down fa-xl"></i>'.html_safe, task_result_data_url(task.id, task.result.id), { :class => 'fa-icon' } %>
+                <% end %>
+                &nbsp;<%= link_to '<i class="fa-solid fa-file fa-xl"></i>'.html_safe, task_config_index_url(task.id), { :class => 'fa-icon' } %>
+                &nbsp;<%#= link_to '<i class="fa-solid fa-map fa-xl"></i>'.html_safe,  task_results_url(task.result.id), { :class => 'fa-icon' } %>
+              </td>
+            </tr>
+            <tr class="result_item" onmouseover=<%= "show_marker(#{task.lat},#{task.lon});" %> onmouseout="clear_marker();">
+              <td colspan="5">
+                <%= task.description %>
+                <br>
+                zl=<%= task.config_to_json['zone_size'] %>
+                &nbsp;
+                U=<%= number_with_delimiter(task.config_to_json['edus']) %>
+                &nbsp;
+                alg=<%= task.config_to_json['edu_alg'] %>
+                <br>
+                <% task.pois.each do |poi| %>
+                  <%= "#{poi[:name]}: f(p)=#{poi[:w]}" %>
+                  &nbsp;
+                <% end %>
+                <br>
+                <% if task.result.present? %>
+                  Zones=<%= number_with_delimiter(task.result.res_data_to_json['n_zones']) %>
+                  &nbsp;
+                  POIs=<%= number_with_delimiter(task.result.res_data_to_json['n_pois']) %>
+                  &nbsp;
+                  EDUs=<%= number_with_delimiter(task.result.res_data_to_json['n_edus']) %>
+                  &nbsp;
+                  tc=<%= number_with_precision(task.result.res_data_to_json['time_classification'], :precision => 3) %>
+                  &nbsp;
+                  tp=<%= number_with_precision(task.result.res_data_to_json['time_positioning'], :precision => 3) %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+
+      </table>
+    </div>
+
+    <div class="mapform_inner_horizontal">
+      <div>
+        <input type="checkbox" id="chk_norecenter" name="chk_norecenter" value="1">
+        <label for="chk_norecenter">Do not recenter the map</label>
+      </div>
+      <button onclick="map_to_image();">Download map image</button>
+    </div>
+
+    <div class="slidecontainer">
+      <span id="opacity_label">Classification layer opacity:</span>
+      <input type="range" min="1" max="100" value="50" class="slider" id="opacity_range">
+      <span id="opacity_value">50 %</span>
+
+      <span id="edus_radius_label">EDUs points radius:</span>
+      <input type="range" min="1" max="100" value="10" class="slider" id="edus_radius_range">
+      <span id="edus_radius_value">10</span>
+    </div>
+
+    <div>
+      {{ render_pagination(tasks, 'map.results') }}
+    </div>
+  </div>
+</div>
+
+<script>
+  map = L.map('map', {renderer: L.canvas()}).setView([0, 0], 2);
+  tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://cityzones.just.pro.br">CityZones</a>'
+  }).addTo(map);
+  let marker = null;
+  let opacity = 0.5;
+  let edus_radius = 10;
+  let slider = document.getElementById('opacity_range');
+  let slider_value = document.getElementById('opacity_value');
+  let slider_edus = document.getElementById('edus_radius_range');
+  let slider_edus_value = document.getElementById('edus_radius_value');
+  circles = [];
+  edus = [];
+
+  /**
+   * Opacity slider events.
+   *
+   * Change opacity value and updates map layer on mouse out.
+   */
+  slider.oninput = function() {
+    opacity = slider.value / 100;
+    slider_value.innerHTML = slider.value + ' %';
+  }
+
+  slider.onchange = function() {
+    circles.forEach((value, index, array) => value.setStyle({fillOpacity: opacity}));
+  }
+
+  /**
+   * EDUs radius slider events.
+   *
+   * Change EDUs radius value and updates map layer on mouse out.
+   */
+  slider_edus.oninput = function() {
+    edus_radius = slider_edus.value;
+    slider_edus_value.innerHTML = slider_edus.value;
+  }
+
+  slider_edus.onchange = function() {
+    console.log('new radius = ' + edus_radius);
+    edus.forEach((value, index, array) => value.setRadius(edus_radius));
+  }
+
+  // Marker functions
+  function clear_marker() {
+    if (marker) map.removeLayer(marker);
+  }
+
+  function show_marker(lat, lon) {
+    clear_marker();
+    marker = L.marker([lat, lon]).addTo(map);
+  }
+
+  /**
+   * Get data funtcion.
+   *
+   * Gets classification data from web service and display classified zones on map.
+   */
+  function get_data(id) {
+    let chk_norecenter = document.getElementById('chk_norecenter');
+    let button = document.getElementById('btn_' + id);
+    button.innerHTML = 'Loading...';
+    button.disabled = true;
+
+    fetch('/tasks/' + id + '/results')
+      .then((res) => {
+        if (res.status == 200) {
+          return res.json();
+        } else {
+          button.innerHTML = 'Error!';
+        }
+      })
+      .then((json) => {
+        while (circles.length > 0) {
+          circle = circles.pop();
+          map.removeLayer(circle);
+        }
+
+        while (edus.length > 0) {
+          edu = edus.pop();
+          map.removeLayer(edu);
+        }
+
+        // Add zones
+        let r = json['zl'] / 2;
+        json['classes']['class_1']['points'].forEach((value, index, array) => {
+          let circle = L.circle([value[1], value[0]], {radius: r, color: '#00ff00', stroke: false, fillOpacity: opacity}).addTo(map);
+          circles.push(circle);
+        });
+        json['classes']['class_2']['points'].forEach((value, index, array) => {
+          let circle = L.circle([value[1], value[0]], {radius: r, color: '#ffff00', stroke: false, fillOpacity: opacity}).addTo(map);
+          circles.push(circle);
+        });
+        json['classes']['class_3']['points'].forEach((value, index, array) => {
+          let circle = L.circle([value[1], value[0]], {radius: r, color: '#ff0000', stroke: false, fillOpacity: opacity}).addTo(map);
+          circles.push(circle);
+        });
+
+        // Add EDUs
+        json['edus'].forEach((value, index, array) => {
+          let edu = L.circle([value[1], value[0]], {radius: edus_radius, color: '#000000', stroke: false, fillOpacity: 1}).addTo(map);
+          edus.push(edu);
+        });
+
+        if (!chk_norecenter.checked) {
+          const polpoints = [];
+          json['polygon'].forEach((value, index, array) => {
+            polpoints.push({
+              'lat': value[1],
+              'lon': value[0]
+            });
+          });
+          map.fitBounds(L.polygon([...polpoints]).getBounds());
+        }
+
+        button.innerHTML = 'Show map';
+        button.disabled = false;
+      })
+      .catch((err) => {
+        button.innerHTML = 'Error!';
+      });
+  }
+
+  /**
+   * Download map image.
+   */
+  function map_to_image() {
+    let map_dom = document.getElementById('map');
+    domtoimage.toBlob(map_dom, {height: map_dom.clientHeight, width: map_dom.clientWidth})
+      .then((data) => window.saveAs(data, 'map.png'));
+  }
+</script>
