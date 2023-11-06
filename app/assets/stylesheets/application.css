@@ -157,6 +157,11 @@ body {
   justify-content: space-between;
 }
 
+.delete_buttons {
+  margin-top: 5em;
+  justify-content: center;
+}
+
 .slidecontainer {
   display: grid;
   grid-template-columns: auto auto auto;

@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+  include SessionHelper
+
   before_action :authorize, :except => [:new, :create]
 
   def new
@@ -31,6 +33,35 @@ class UsersController < ApplicationController
     else
       render :edit, :status => :unprocessable_entity
     end
+  end
+
+  def destroy
+    user = current_user
+    data_types = ['map', 'edus', 'roads']
+
+    # Delete all map data, results and tasks
+    current_user.tasks.each do |task|
+      if task.result.present?
+        data_types.each do |type|
+          filename = File.join(ENV['RESULTS_DIR'], "#{task.base_filename}_#{type}.csv")
+          Rails.logger.info "[User deletion] Deleting file #{filename}"
+          File.delete(filename) if File.file?(filename)
+        end
+        task.result.destroy!
+      end
+      task.destroy!
+    end
+
+    # Delete any password recovery token
+    current_user.password_recoveries.each do |pr|
+      pr.destroy!
+    end
+
+    sign_out
+    user.destroy!
+
+    flash[:message] = 'User permanently deleted.'
+    redirect_to new_session_url
   end
 
   private
