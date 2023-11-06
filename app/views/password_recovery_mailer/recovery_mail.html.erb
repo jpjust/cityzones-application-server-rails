@@ -1,0 +1,15 @@
+<h1>CityZones password recovery link</h1>
+
+<p>
+  This is a password recovery link so you can change your forgotten password for CityZones.
+</p>
+
+<p>
+  <a href=<%= "http://localhost:3000/password_recovery/#{@recovery.token}/edit" %>>
+    <%= "http://localhost:3000/password_recovery/#{@recovery.token}/edit" %>
+  </a>
+</p>
+
+<p>
+  If you haven't requested this link, just ignore it. Also, it is a good idea to check if you have a strong password.
+</p>

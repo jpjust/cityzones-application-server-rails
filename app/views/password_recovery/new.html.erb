@@ -1,0 +1,16 @@
+<div class="center_area">
+  <div class="form_area">
+    <h2>Password recovery</h2>
+
+    <%= form_for :password_recovery, url: password_recovery_index_url do |f| %>
+      <div class="form_field">
+        <%= f.label :email, 'E-mail: *' %>
+        <%= f.email_field :email, { :required => true } %>
+      </div>
+      <div class="form_buttons">
+        <%= f.submit 'Request recovery link', { :class => :button_default } %>
+        <%= link_to '<button type="button">Back to Log in</button>'.html_safe, session_index_url %>
+      </div>
+    <% end %>
+  </div>
+</div>

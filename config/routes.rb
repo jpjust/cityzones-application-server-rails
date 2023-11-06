@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
   resources :session, :only => [:index, :create, :destroy]
   resources :users
+  resources :password_recovery, :only => [:new, :create, :edit, :update]
   resources :countries, :only => [:index]
   resources :pages, :only => [:show]
   

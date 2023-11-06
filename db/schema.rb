@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_05_145428) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_06_134118) do
   create_table "cell_types", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
@@ -37,7 +37,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_05_145428) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "results", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "password_recoveries", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "token", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "fk_rails_105cf054df"
+  end
+
+  create_table "results", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.integer "task_id"
     t.text "res_data", size: :long, collation: "utf8mb4_bin"
@@ -73,7 +82,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_05_145428) do
     t.index ["email"], name: "email", unique: true
   end
 
-  create_table "workers", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "workers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "token", limit: 64, null: false
     t.string "name", limit: 50, null: false
     t.string "description", limit: 200
@@ -84,6 +93,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_05_145428) do
     t.index ["token"], name: "token", unique: true
   end
 
+  add_foreign_key "password_recoveries", "users"
   add_foreign_key "results", "tasks", name: "results_ibfk_1"
   add_foreign_key "tasks", "users", name: "tasks_ibfk_1"
 end
