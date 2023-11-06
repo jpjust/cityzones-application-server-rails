@@ -2,7 +2,7 @@ class SessionController < ApplicationController
 
   before_action :block_access, except: [:destroy]
 
-  def index
+  def new
   end
 
   def create
@@ -18,7 +18,7 @@ class SessionController < ApplicationController
 
   def destroy
     sign_out
-    redirect_to session_index_url
+    redirect_to new_session_url
   end
 
   private

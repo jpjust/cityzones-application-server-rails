@@ -17,7 +17,7 @@ class PasswordRecoveryController < ApplicationController
     end
 
     flash[:message] = 'A recovery link was sent to the registered e-mail.'
-    redirect_to session_index_url
+    redirect_to new_session_url
   end
 
   def edit
@@ -25,7 +25,7 @@ class PasswordRecoveryController < ApplicationController
 
     if @recovery.nil? || Time.now > @recovery.expires_at
       flash[:notice] = 'Recovery link is invalid or expired.'
-      redirect_to session_index_url
+      redirect_to new_session_url
       return
     end
   end
@@ -35,7 +35,7 @@ class PasswordRecoveryController < ApplicationController
 
     if @recovery.nil? || Time.now > @recovery.expires_at
       flash[:notice] = 'Recovery link is invalid or expired.'
-      redirect_to session_index_url
+      redirect_to new_session_url
       return
     end
 
@@ -45,7 +45,7 @@ class PasswordRecoveryController < ApplicationController
     if @recovery.user.save
       @recovery.destroy
       flash[:message] = 'Password changed.'
-      redirect_to session_index_url
+      redirect_to new_session_url
     else
       flash[:notice] = 'Passwords do not match.'
       render :edit, :status => :unprocessable_entity

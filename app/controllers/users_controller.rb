@@ -12,7 +12,7 @@ class UsersController < ApplicationController
 
     if @user.save
       flash[:message] = 'New user created. You can now log in.'
-      redirect_to session_index_url
+      redirect_to new_session_url
     else
       render :new, :status => :unprocessable_entity
     end

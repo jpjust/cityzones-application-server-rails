@@ -4,9 +4,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
-  root 'session#index'
+  root 'session#new'
 
-  resources :session, :only => [:index, :create, :destroy]
+  resources :session, :only => [:new, :create, :destroy]
   resources :users
   resources :password_recovery, :only => [:new, :create, :edit, :update]
   resources :countries, :only => [:index]

@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
       current_user.last_access_at = Time.now
       current_user.save
     else
-      redirect_to session_index_url
+      redirect_to new_session_url
     end
   end
 

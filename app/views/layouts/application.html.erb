@@ -39,7 +39,7 @@
 
             <%= link_to 'Profile', edit_user_url(current_user.id) %>
           <% else %>
-            <%= link_to 'Login', session_index_url %>
+            <%= link_to 'Login', new_session_url %>
           <% end %>
 
           <%= link_to 'Help', page_url('help') %>
