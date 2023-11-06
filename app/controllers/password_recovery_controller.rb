@@ -43,6 +43,7 @@ class PasswordRecoveryController < ApplicationController
     @recovery.user.password_confirmation = password_recovery_params[:password_confirmation]
     
     if @recovery.user.save
+      @recovery.destroy
       flash[:message] = 'Password changed.'
       redirect_to session_index_url
     else
