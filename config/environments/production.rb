@@ -74,6 +74,7 @@ Rails.application.configure do
     :authentication => ENV['MAIL_AUTH'],
     :ssl => true
   }
+  config.action_mailer.default_url_options = { host: 'cityzones.just.pro.br', :protocol => 'https' }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
