@@ -13,7 +13,7 @@ class Task < ApplicationRecord
   attribute :polygon
 
   def config_to_json
-    Jself.config.is_a?(Hash) ? self.config : JSON.parse(self.config)
+    self.config.is_a?(Hash) ? self.config : JSON.parse(self.config)
   end
 
   def geojson_to_json
