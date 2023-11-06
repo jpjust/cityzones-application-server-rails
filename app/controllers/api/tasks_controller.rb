@@ -22,7 +22,7 @@ class Api::TasksController < ApplicationController
         :geojson => task.geojson_to_json
       }
     else
-      render :json => {}, :status => 404
+      render :json => {}, :status => 204
     end
   end
 

@@ -39,12 +39,20 @@ class ResultsController < ApplicationController
     edus_file = "#{ENV['RESULTS_DIR']}/#{task.base_filename}_edus.csv"
     
     # Classification CSV
-    map_csv = CSV.read(map_file)
+    map_csv = CSV.read(map_file, :headers => true)
     map_csv.each do |row|
-      m = row[1]
-      geodata = JSON.parse(row[2])
-      coord = geodata['coordinates']
+      if row['RL'].present?
+        # In case of a 'RL' column, it means this is the new format
+        m = row['RL']
+        coord = [row['lon'].to_f, row['lat'].to_f]
+      else row['class'].present?
+        # Otherwise it is the old format
+        m = row[1]
+        geodata = JSON.parse(row[2])
+        coord = geodata['coordinates']
+      end
       classification[:classes]["class_#{m}"][:points] << coord
+
       left   = coord[0] if coord[0] < left
       right  = coord[0] if coord[0] > right
       bottom = coord[1] if coord[1] < bottom
@@ -55,10 +63,16 @@ class ResultsController < ApplicationController
     classification[:center_lon] = (left + right) / 2
 
     # EDUs CSV
-    edus_csv = CSV.read(edus_file)
+    edus_csv = CSV.read(edus_file, :headers => true)
     edus_csv.each do |row|
-      geodata = JSON.parse(row[1])
-      coord = geodata['coordinates']
+      if row['type'].present?
+        # In case of a 'type' column, it means this is the new format
+        coord = [row['lon'].to_f, row['lat'].to_f]
+      else
+        # Otherwise it is the old format
+        geodata = JSON.parse(row[1])
+        coord = geodata['coordinates']
+      end
       classification[:edus] << coord
     end
 
