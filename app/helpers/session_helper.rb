@@ -14,7 +14,7 @@ module SessionHelper
 
   def block_access
     if current_user.present?
-      redirect_to :controller => :tasks, :action => :new
+      redirect_to new_task_url
     end
   end
 
