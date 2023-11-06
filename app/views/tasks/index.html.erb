@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 <script src="https://cdn.bootcss.com/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 <script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
 
@@ -116,13 +114,13 @@
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://cityzones.just.pro.br">CityZones</a>'
   }).addTo(map);
-  let marker = null;
-  let opacity = 0.5;
-  let edus_radius = 10;
-  let slider = document.getElementById('opacity_range');
-  let slider_value = document.getElementById('opacity_value');
-  let slider_edus = document.getElementById('edus_radius_range');
-  let slider_edus_value = document.getElementById('edus_radius_value');
+  marker = null;
+  opacity = 0.5;
+  edus_radius = 10;
+  slider = document.getElementById('opacity_range');
+  slider_value = document.getElementById('opacity_value');
+  slider_edus = document.getElementById('edus_radius_range');
+  slider_edus_value = document.getElementById('edus_radius_value');
   circles = [];
   edus = [];
 
