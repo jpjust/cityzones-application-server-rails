@@ -6,11 +6,6 @@ Rails.application.routes.draw do
 
   root 'session#index'
 
-  # Sessão (login)
-  # get   '/login',                  :to => 'sessao#autenticacao',           :as => :autenticacao
-  # post  '/login',                  :to => 'sessao#login',                  :as => :login
-  # get   '/logout',                 :to => 'sessao#logout',                 :as => :logout
-
   resources :session, :only => [:index, :create, :destroy]
   resources :users
   resources :password_recovery, :only => [:new, :create, :edit, :update]
