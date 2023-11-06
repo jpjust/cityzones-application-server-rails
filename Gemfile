@@ -77,7 +77,6 @@ gem "mysql2", "~> 0.5.5"
 
 gem "pry", "~> 0.14.2"
 
-gem "terraformer", "~> 0.2.1"
 
 gem "archive-zip", "~> 0.12.0"
 

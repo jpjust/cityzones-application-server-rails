@@ -3,12 +3,19 @@ module TasksHelper
   # Generate a GeoJSON structure for the polygon.
   def make_polygon(polygon)
     polygon << polygon[0]
-    geojson_polygon = Terraformer::Polygon.new([polygon])
-    geojson_feature = geojson_polygon.to_feature
-    geojson_collection = Terraformer::FeatureCollection.new
-    geojson_collection << geojson_feature
-    
-    return geojson_collection
+    geojson = {
+      :type => 'FeatureCollection',
+      :features => [{
+        :type => 'Feature',
+        :geometry => {
+          :type => 'Polygon',
+          :coordinates => [polygon]
+        },
+        :properties => {}
+      }]
+    }
+  
+    return geojson
   end
 
   # Generate a JSON configuration for the riskzones rool.
@@ -44,7 +51,10 @@ module TasksHelper
       :zone_size => options[:zl],
       :cache_zones => false,
       :M => ENV['RZ_M'].to_i,
-      :edus => options[:edus],
+      :edus => {
+        :loose => options[:edus],
+        :tight => 0
+      },
       :geojson => "#{base_filename}.geojson",
       :pois => "#{base_filename}.osm",
       :pois_use_all => false,
