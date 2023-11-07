@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
 
   include SessionHelper
+  include TasksHelper
 
   before_action :authorize, :except => [:new, :create]
 
@@ -37,19 +38,10 @@ class UsersController < ApplicationController
 
   def destroy
     user = current_user
-    data_types = ['map', 'edus', 'roads']
-
+    
     # Delete all map data, results and tasks
     current_user.tasks.each do |task|
-      if task.result.present?
-        data_types.each do |type|
-          filename = File.join(ENV['RESULTS_DIR'], "#{task.base_filename}_#{type}.csv")
-          Rails.logger.info "[User deletion] Deleting file #{filename}"
-          File.delete(filename) if File.file?(filename)
-        end
-        task.result.destroy!
-      end
-      task.destroy!
+      delete_task(task)
     end
 
     # Delete any password recovery token

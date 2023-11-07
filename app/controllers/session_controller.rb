@@ -9,10 +9,10 @@ class SessionController < ApplicationController
     @user = User.find_by(email: session_params[:email].try(:downcase))
     if @user && @user.authenticate(session_params[:password])
       sign_in @user
-      redirect_to :controller => :tasks, :action => :new
+      redirect_to new_task_url
     else
       flash[:notice] = 'Authentication failure!'
-      render :index, :status => :unprocessable_entity
+      render :new, :status => :unprocessable_entity
     end
   end
 

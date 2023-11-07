@@ -62,6 +62,18 @@ class TasksController < ApplicationController
     redirect_to tasks_url
   end
 
+  def destroy
+    task = Task.where(id: params[:id], user_id: current_user.id).first
+
+    unless task.present?
+      render :json => {}, :status => 404
+      return
+    end
+
+    delete_task(task)
+    redirect_to tasks_url
+  end
+
   private
 
   def task_params

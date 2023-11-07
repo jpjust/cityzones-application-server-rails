@@ -1,5 +1,7 @@
 module TasksHelper
 
+  include ResultsHelper
+
   # Generate a GeoJSON structure for the polygon.
   def make_polygon(polygon)
     polygon << polygon[0]
@@ -70,6 +72,11 @@ module TasksHelper
     }
 
     return base_filename, base_conf
+  end
+
+  def delete_task(task)
+    delete_result(task.result) if task.result.present?
+    task.destroy!
   end
 
 end
