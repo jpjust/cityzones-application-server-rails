@@ -46,8 +46,8 @@
                   <%= button_tag button_text, { :id => "btn_#{task.id}", :onclick => "get_data(#{task.id});" } %>
                   &nbsp;<%= link_to '<i class="fa-regular fa-circle-down"></i>'.html_safe, task_result_data_url(task.id, task.result.id), { :class => 'fa-icon' } %>
                 <% end %>
-                &nbsp;<%= link_to '<i class="fa-regular fa-file"></i>'.html_safe, task_config_index_url(task.id), { :class => 'fa-icon' } %>
-                &nbsp;<%#= link_to '<i class="fa-regular fa-map"></i>'.html_safe,  task_results_url(task.result.id), { :class => 'fa-icon' } %>
+                &nbsp;<%= link_to '<i class="fa-regular fa-file"></i>'.html_safe,      task_config_index_url(task.id), { :class => 'fa-icon' } %>
+                &nbsp;<%= link_to '<i class="fa-regular fa-map"></i>'.html_safe,       edit_task_url(task.id),         { :class => 'fa-icon' } %>
                 &nbsp;<%= link_to '<i class="fa-regular fa-trash-can"></i>'.html_safe, task_url(task.id), {
                         data: {
                           turbo_method: :delete,

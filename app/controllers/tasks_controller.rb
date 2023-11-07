@@ -62,6 +62,18 @@ class TasksController < ApplicationController
     redirect_to tasks_url
   end
 
+  def edit
+    @task = Task.where(id: params[:id], user_id: current_user.id).first
+
+    unless @task.present?
+      flash[:notice] = 'Task not found.'
+      redirect_to tasks_url
+      return
+    end
+
+    @task.polygon = @task.geojson_to_json['features'][0]['geometry']['coordinates'][0].to_s
+  end
+
   def destroy
     task = Task.where(id: params[:id], user_id: current_user.id).first
 

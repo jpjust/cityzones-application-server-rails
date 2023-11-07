@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   resources :countries, :only => [:index]
   resources :pages, :only => [:show]
   
-  resources :tasks, :only => [:index, :new, :create, :destroy] do
+  resources :tasks, :only => [:index, :new, :create, :edit, :destroy] do
     resources :config, :only => [:index]
     resources :results, :only => [:index] do
       resources :data, :only => [:index]
