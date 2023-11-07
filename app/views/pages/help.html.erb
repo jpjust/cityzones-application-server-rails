@@ -1,7 +1,7 @@
 <h2>Submitting an AoI classification task</h2>
 
 <p>
-  Before using CityZones you must register for an account. Just go to the <a href="{{ url_for('auth.signup') }}">Sign up page</a>,
+  Before using CityZones you must register for an account. Just go to the <%= link_to 'Sign up page', new_user_url %>,
   fill in the form with you data and submit it. You will be redirected to the Login page. Just enter your registered e-mail and
   password to have access to the platform.
 </p>
@@ -58,24 +58,28 @@
 </p>
 
 <p>
-  <i class="fa-solid fa-cloud-arrow-down fa-xl"></i>: Download a ZIP file containing the CSV data of the classification
+  <i class="fa-solid fa-cloud-arrow-down"></i>: Download a ZIP file containing the CSV data of the classification
   that can be used in Google Earth Engine. Use the
   <a href="https://github.com/jpjust/cityzones-maps-service/blob/main/gee_riskzones.js" target="_blank">example script</a>
   in the project's GitHub repository.
 </p>
 
 <p>
-  <i class="fa-solid fa-file fa-xl"></i>: Download a ZIP file containing the configuration JSON and the AoI GeoJSON
+  <i class="fa-solid fa-file"></i>: Download a ZIP file containing the configuration JSON and the AoI GeoJSON
   to be used with the RiskZones tool. Use these files to run the classification tool locally on a computer.
 </p>
 
 <p>
-  <i class="fa-solid fa-map fa-xl"></i>: Re-opens the Map view with the AoI used for this task. This feature allows
+  <i class="fa-solid fa-map"></i>: Re-opens the Map view with the AoI used for this task. This feature allows
   the re-creation of a task with other options.
 </p>
 
 <p>
-  Sometimes something wrong may happen on a Maps-service device and the task does not get finished. {{ task_req_exp }}
+  <i class="fa-regular fa-trash-can"></i>: Deletes the task and its results.
+</p>
+
+<p>
+  Sometimes something wrong may happen on a Maps-service device and the task does not get finished. <%= ENV['TASK_REQ_EXP'] %>
   minutes after a worker gets a task. If the results are not received by the web application, the tasks enters the
   &quot;<span class="status_expired">Expired</span>&quot; state. This does not mean that a requested task will not be computed.
   Actually, the task returns to the queue, so another Maps-service device can get it and finish. This can also happen if an AoI is too big and
@@ -85,7 +89,7 @@
 
 <p>
   Finally, any task may fail. A failure usually occurs if there are no PoIs inside a defined AoI. In this case, the worker will
-  not be able to return a result. If a task is requested {{ task_req_max }} times and gets no result after the expiration period, it is
+  not be able to return a result. If a task is requested <%= ENV['TASK_REQ_MAX'] %> times and gets no result after the expiration period, it is
   considered as a failed task and it will enter the &quot;<span class="status_failed">Failed</span>&quot; state.
   In this state the task will not be given to a worker anymore.
 </p>

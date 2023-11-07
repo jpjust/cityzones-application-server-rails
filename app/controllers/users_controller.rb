@@ -4,6 +4,7 @@ class UsersController < ApplicationController
   include TasksHelper
 
   before_action :authorize, :except => [:new, :create]
+  before_action :block_access, except: [:edit, :update, :destroy]
 
   def new
     @user = User.new
