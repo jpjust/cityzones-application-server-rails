@@ -21,7 +21,7 @@
         <%= button_tag 'Clear last marker', { :type => :button, :onclick => 'clearlastmarker();' } %>
         <%= button_tag 'Clear map',         { :type => :button, :onclick => 'clearlastmarker();', :class => :button_alert } %>
         <%= f.label :country, 'Find country:' %>
-        <%= f.collection_select :country, Country.order(:name), :coord, :name, {}, { :onchange => 'changeCountry();' } %>
+        <%= f.collection_select :country, Country.order(:name), :coord, :name, { :prompt => true }, { :onchange => 'changeCountry();' } %>
       </div>
 
       <p style="text-align: center;"><strong>Settings</strong></p>
