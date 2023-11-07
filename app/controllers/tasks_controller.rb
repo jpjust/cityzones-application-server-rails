@@ -28,36 +28,7 @@ class TasksController < ApplicationController
       return
     end
 
-    # Geographical data
-    geojson_fc = make_polygon(eval(task_params[:polygon]))
-    base_filename, conf = make_config_file(
-      :polygon => eval(task_params[:polygon]),
-      :zl      => task_params[:zl].to_i,
-      :edus    => task_params[:edus].to_i,
-      :edu_alg => task_params[:edu_alg]
-    )
-    center_lon = (conf[:left] + conf[:right]) / 2
-    center_lat = (conf[:bottom] + conf[:top]) / 2
-    
-    # PoIs configuration
-    conf[:pois_use_all] = task_params[:pois_use_all]
-    conf[:pois_types][:amenity][:hospital]     = { :w => task_params[:w_hospital].to_i } if task_params[:poi_hospital].to_i == 1
-    conf[:pois_types][:amenity][:fire_station] = { :w => task_params[:w_firedept].to_i } if task_params[:poi_firedept].to_i == 1
-    conf[:pois_types][:amenity][:police]       = { :w => task_params[:w_police].to_i } if task_params[:poi_police].to_i == 1
-    conf[:pois_types][:railway][:station]      = { :w => task_params[:w_metro].to_i } if task_params[:poi_metro].to_i == 1
-    
-    # Task creation
-    @task = Task.create!({
-      user_id: current_user.id,
-      base_filename: base_filename,
-      config: conf.to_json,
-      geojson: geojson_fc.to_json,
-      lat: task_params[:lat].to_f,
-      lon: task_params[:lon].to_f,
-      description: task_params[:description],
-      requests: 0
-    })
-    
+    create_task
     flash[:message] = "Task ##{@task.id} created."
     redirect_to tasks_url
   end
@@ -72,6 +43,11 @@ class TasksController < ApplicationController
     end
 
     @task.polygon = @task.geojson_to_json['features'][0]['geometry']['coordinates'][0].to_s
+  end
+
+  def update
+    create_task
+    redirect_to tasks_url
   end
 
   def destroy

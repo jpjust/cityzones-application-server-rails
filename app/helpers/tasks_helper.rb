@@ -74,6 +74,40 @@ module TasksHelper
     return base_filename, base_conf
   end
 
+  # Create a task from form data
+  def create_task
+    # Geographical data
+    geojson_fc = make_polygon(eval(task_params[:polygon]))
+    base_filename, conf = make_config_file(
+      :polygon => eval(task_params[:polygon]),
+      :zl      => task_params[:zl].to_i,
+      :edus    => task_params[:edus].to_i,
+      :edu_alg => task_params[:edu_alg]
+    )
+    center_lon = (conf[:left] + conf[:right]) / 2
+    center_lat = (conf[:bottom] + conf[:top]) / 2
+    
+    # PoIs configuration
+    conf[:pois_use_all] = task_params[:pois_use_all]
+    conf[:pois_types][:amenity][:hospital]     = { :w => task_params[:w_hospital].to_i } if task_params[:poi_hospital].to_i == 1
+    conf[:pois_types][:amenity][:fire_station] = { :w => task_params[:w_firedept].to_i } if task_params[:poi_firedept].to_i == 1
+    conf[:pois_types][:amenity][:police]       = { :w => task_params[:w_police].to_i } if task_params[:poi_police].to_i == 1
+    conf[:pois_types][:railway][:station]      = { :w => task_params[:w_metro].to_i } if task_params[:poi_metro].to_i == 1
+    
+    # Task creation
+    @task = Task.create!({
+      user_id: current_user.id,
+      base_filename: base_filename,
+      config: conf.to_json,
+      geojson: geojson_fc.to_json,
+      lat: center_lat.to_f,
+      lon: center_lon.to_f,
+      description: task_params[:description],
+      requests: 0
+    })
+  end
+
+  # Delete a task and its results
   def delete_task(task)
     delete_result(task.result) if task.result.present?
     task.destroy!
