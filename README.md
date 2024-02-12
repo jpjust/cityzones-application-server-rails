@@ -1,24 +1,31 @@
-# README
+# CityZones Application Server
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+CityZones Application Server is a web interface and back-end application for CityZones Maps-service: https://github.com/jpjust/cityzones-maps-service
 
-Things you may want to cover:
+The web interface works as a client for the user, so the user can configure an AoI to reqeuest a RiskZones classification. The Maps-service workers will periodically request a task from the CityZones Application Server to perform it locally and then send the results back. The web interface can then present the results to the user.
 
-* Ruby version
+## Dependencies
 
-* System dependencies
+* Ruby 3.1.2 (if your system's Ruby version is different, we recommend using `rbenv` to install the proper version)
 
-* Configuration
+## How to deploy
 
-* Database creation
+First of all, clone this repository into your server folder. After cloning, `cd` into the cloned repository and follow these steps:
 
-* Database initialization
+First, install all dependencies.
 
-* How to run the test suite
+`bundle install`
 
-* Services (job queues, cache servers, search engines, etc.)
+Copy `.env.example` file and set the configuration for your server. Pay attention the the database configuration.
 
-* Deployment instructions
+`cp .env.example .env`
 
-* ...
+Run migration scripts to create database tables and populate them with default values.
+
+`bundle exec rake db:migrate`
+
+To run CityZones Web you will need Phusion Passenger WSGI enabled in your server. Follow your HTTP daemon instructions to setup Passenger and finish the deployment.
+
+## Admin account
+
+CityZones has an admin account. Email: `admin`, password: `admin`. Use this account to register workers and get their API keys.
