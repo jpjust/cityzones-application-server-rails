@@ -55,6 +55,14 @@
         <%= f.submit 'Register', { :class => :button_default } %>
         <%= link_to '<button type="button">Back to Log in</button>'.html_safe, new_session_url %>
       </div>
+      <div class="form_buttons delete_buttons">
+        <%= link_to button_tag('Delete account', { :type => :button, :class => :button_alert }), user_url(current_user.id), {
+          data: {
+            turbo_method: :delete,
+            turbo_confirm: 'Do you really want to delete your account? All registered data will be permanently deleted and there is no way back!'
+          }
+        } %>
+        </div>
     <% end %>
   </div>
 </div>
