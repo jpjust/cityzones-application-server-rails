@@ -51,6 +51,10 @@
           </div>
         <% end %>
       </div>
+      <div class="form_buttons">
+        <%= f.submit 'Register', { :class => :button_default } %>
+        <%= link_to '<button type="button">Back to Log in</button>'.html_safe, new_session_url %>
+      </div>
       <% if logged_in? %>
         <div class="form_buttons delete_buttons">
           <%= link_to button_tag('Delete account', { :type => :button, :class => :button_alert }), user_url(current_user.id), {
@@ -61,10 +65,6 @@
           } %>
         </div>
       <% else %>
-        <div class="form_buttons">
-          <%= f.submit 'Register', { :class => :button_default } %>
-          <%= link_to '<button type="button">Back to Log in</button>'.html_safe, new_session_url %>
-        </div>
       <% end %>
     <% end %>
   </div>
