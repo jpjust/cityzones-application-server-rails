@@ -5,7 +5,7 @@ echo "Updating app..."
 git pull
 git reset --hard
 chown cityzones: Gemfile*
-bundle install
+sudo -u cityzones bundle install
 /opt/rbenv/shims/bundle exec rake assets:precompile db:migrate RAILS_ENV=production
 chown -R www-data: *
 touch tmp/restart.txt
