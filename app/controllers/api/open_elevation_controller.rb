@@ -4,6 +4,7 @@ class Api::OpenElevationController < ApplicationController
   require 'net/https'
 
   protect_from_forgery with: :null_session
+  before_action :authorize_worker
 
   def lookup
     http = Net::HTTP.new('localhost', 8080)
