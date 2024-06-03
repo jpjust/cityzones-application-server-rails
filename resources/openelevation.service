@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenElevation
+
+[Service]
+ExecStart=/usr/bin/env python3 /var/www/open-elevation/server.py
+Restart=always
+User=nobody
+Group=nobody
+Environment=PATH=/usr/bin:/usr/local/bin
+WorkingDirectory=/var/www/open-elevation
+
+[Install]
+WantedBy=multi-user.target
