@@ -4,8 +4,8 @@ Description=OpenElevation
 [Service]
 ExecStart=/usr/bin/env python3 /var/www/open-elevation/server.py
 Restart=always
-User=nobody
-Group=nobody
+User=www-data
+Group=www-data
 Environment=PATH=/usr/bin:/usr/local/bin
 WorkingDirectory=/var/www/open-elevation
 
