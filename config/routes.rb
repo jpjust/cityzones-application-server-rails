@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   namespace :api do
     resources :tasks, :only => [:index, :update]
     get '/cells/:left/:top/:right/:bottom', :to => 'cells#index'
+    post '/open_elevation/lookup', :to => 'open_elevation#lookup'
   end
 
 end
