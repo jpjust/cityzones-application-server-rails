@@ -6,7 +6,7 @@ class Api::OpenElevationController < ApplicationController
   protect_from_forgery with: :null_session
 
   def lookup
-    http = Net::HTTP.new('localhost', 8081)
+    http = Net::HTTP.new('localhost', 8080)
     headers = {
       'Content-type': 'application/json'
     }
