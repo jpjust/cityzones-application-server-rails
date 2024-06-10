@@ -25,10 +25,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_06_134118) do
     t.index ["coord"], name: "cells_point_idx", length: 32, type: :spatial
   end
 
-  create_table "cells_types", id: :integer, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "name", limit: 50, null: false
-  end
-
   create_table "countries", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.float "lat", null: false

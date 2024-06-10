@@ -3,6 +3,7 @@ class Task < ApplicationRecord
   belongs_to :user
 
   has_one :result
+  has_many :tasks_pois
 
   validates :base_filename, :config, :geojson, :lat, :lon, :requests, :presence => true
   validates :base_filename, :uniqueness => true
@@ -20,18 +21,18 @@ class Task < ApplicationRecord
     self.geojson.is_a?(Hash) ? self.geojson : JSON.parse(self.geojson)
   end
 
-  def pois
-    pois_list = []
-    self.config_to_json['pois_types'].keys.each do |poi_category|
-      self.config_to_json['pois_types'][poi_category].keys.each do |poi|
-        pois_list << {
-          :name => poi,
-          :w => self.config_to_json['pois_types'][poi_category][poi]['w'].to_i
-        }
-      end
-    end
-    pois_list
-  end
+  # def pois
+  #   pois_list = []
+  #   self.config_to_json['pois_types'].keys.each do |poi_category|
+  #     self.config_to_json['pois_types'][poi_category].keys.each do |poi|
+  #       pois_list << {
+  #         :name => poi,
+  #         :w => self.config_to_json['pois_types'][poi_category][poi]['w'].to_i
+  #       }
+  #     end
+  #   end
+  #   pois_list
+  # end
 
   def expired?
     return false if self.requested_at.nil?

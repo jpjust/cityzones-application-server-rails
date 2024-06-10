@@ -14,3 +14,10 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+
+ActiveSupport::Inflector.inflections do |inflect|
+
+  inflect.irregular 'TaskPoi', 'TasksPois'
+  inflect.irregular 'task_poi', 'tasks_pois'
+
+end

@@ -3,7 +3,8 @@ module TasksHelper
   include ResultsHelper
 
   # Generate a GeoJSON structure for the polygon.
-  def make_polygon(polygon)
+  def make_polygon(task)
+    polygon = eval(task.polygon)
     polygon << polygon[0]
     geojson = {
       :type => 'FeatureCollection',
