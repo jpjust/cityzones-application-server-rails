@@ -39,8 +39,22 @@
           </div>
         </div>
 
+        <div class="mapform_inner_horizontal">
+          <div>
+            <%= f.check_box :risk_flood %>
+            <%= f.label :risk_flood, 'Enable flood risk assessment' %>
+          </div>
+        </div>
+
+        <div class="mapform_inner_horizontal">
+          <div>
+            <%= f.label :flood_quota, 'Flood quota:' %>
+            <%= f.number_field :flood_quota, { :value => 0, :in => 0..100 } %>m
+          </div>
+        </div>
+
         <p style="text-align: center;"><strong>Points of Interest (PoIs)</strong></p>
-        
+
         <div class="mapform_inner_horizontal">
           <div>
             <%= f.check_box :poi_hospital, { :checked => true } %>
@@ -51,7 +65,7 @@
             <%= f.number_field :w_hospital, { :value => 10, :in => 1..99, :required => true } %>
           </div>
         </div>
-        
+
         <div class="mapform_inner_horizontal">
           <div>
             <%= f.check_box :poi_firedept, { :checked => true } %>
@@ -62,7 +76,7 @@
             <%= f.number_field :w_firedept, { :value => 5, :in => 1..99, :required => true } %>
           </div>
         </div>
-        
+
         <div class="mapform_inner_horizontal">
           <div>
             <%= f.check_box :poi_police, { :checked => true } %>
@@ -86,7 +100,7 @@
         </div>
 
         <p style="text-align: center;"><strong>EDUs positioning</strong></p>
-        
+
         <div class="mapform_inner_horizontal">
           <div>
             <%= f.label :edus, 'Number of EDUs:' %>
@@ -100,7 +114,7 @@
             <%= f.label :edu_alg_none, 'None (no EDUs positioning)' %>
           </div>
         </div>
-        
+
         <div class="mapform_inner_horizontal">
           <div>
             <%= f.radio_button :edu_alg, :random %>
@@ -137,7 +151,7 @@
         </div>
 
         <p style="text-align: center;"><strong>Task description</strong></p>
-        
+
         <div class="mapform_inner_horizontal" style="justify-content: center;">
           <%= f.text_area :description, { :size => '30x5', :required => true } %>
         </div>
@@ -158,7 +172,7 @@
   markers = [];
   polpoints = [];
   html_polygon = document.getElementById('task_polygon');
-  
+
   polygon = null;
   closed = false;
 
@@ -224,7 +238,7 @@
       map.removeLayer(polygon);
       polygon = null;
     }
-    
+
     while (markers.length > 0) {
       marker = markers.pop();
       map.removeLayer(marker);
@@ -248,7 +262,7 @@
       polpoints.pop();
       map.removeLayer(marker);
     }
-    
+
     if (polygon) {
       map.removeLayer(polygon);
       polygon = null;

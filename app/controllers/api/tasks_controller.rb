@@ -10,7 +10,7 @@ class Api::TasksController < ApplicationController
                .where('requested_at IS NULL OR requested_at < ?', request_exp)
                .reject{ |t| t.result.present? }
                .first
-    
+
     if task.present?
       task.requested_at = Time.now
       task.requests += 1
@@ -28,7 +28,7 @@ class Api::TasksController < ApplicationController
 
   def update
     task = Task.find(params[:id])
-    
+
     if task.result.present?
       render :json => { :msg => 'There is a result for this task already.' }, :status => 422
       return
@@ -62,7 +62,7 @@ class Api::TasksController < ApplicationController
   private
 
   def task_params
-    params.require(:task).permit(:res_data, :data => [:map, :edus, :roads])
+    params.require(:task).permit(:res_data, :data => [:map, :edus, :roads, :rivers, :elevation, :slope])
   end
 
 end

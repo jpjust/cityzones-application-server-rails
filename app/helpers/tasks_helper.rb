@@ -16,12 +16,12 @@ module TasksHelper
         :properties => {}
       }]
     }
-  
+
     return geojson
   end
 
   # Generate a JSON configuration for the riskzones rool.
-  def make_config_file(options = { :polygon => [], :zl => 30, :edus => 300, :edu_alg => :none })
+  def make_config_file(options = { :polygon => [], :zl => 30, :edus => 300, :edu_alg => :none, :risk_flood => false, :flood_quota => 0 })
     timestamp = Time.now.strftime('%Y%m%d%H%M%S%N')
     base_filename = "task_#{timestamp}"
 
@@ -35,7 +35,7 @@ module TasksHelper
       bottom = point[1] if point[1] < bottom
       top    = point[1] if point[1] > top
     end
-    
+
     # Increase grid box by 10% each side (to get PoIs outside)
     width = (right - left).abs
     height = (top - bottom).abs
@@ -43,7 +43,7 @@ module TasksHelper
     right += width * 0.1
     top += height * 0.1
     bottom -= height * 0.1
-    
+
     base_conf = {
       :base_filename => base_filename,
       :left => left,
@@ -71,6 +71,14 @@ module TasksHelper
       :res_data => "#{base_filename}_res_data.json",
     }
 
+    # Flood risk assessment
+    if options[:risk_flood]
+      base_conf[:flood_quota] = options[:flood_quota].to_i
+      base_conf[:output_rivers] = "#{base_filename}_rivers.csv"
+      base_conf[:output_elevation] = "#{base_filename}_elevation.csv"
+      base_conf[:output_slope] = "#{base_filename}_slope.csv"
+    end
+
     return base_filename, base_conf
   end
 
@@ -79,21 +87,23 @@ module TasksHelper
     # Geographical data
     geojson_fc = make_polygon(eval(task_params[:polygon]))
     base_filename, conf = make_config_file(
-      :polygon => eval(task_params[:polygon]),
-      :zl      => task_params[:zl].to_i,
-      :edus    => task_params[:edus].to_i,
-      :edu_alg => task_params[:edu_alg]
+      :polygon     => eval(task_params[:polygon]),
+      :zl          => task_params[:zl].to_i,
+      :edus        => task_params[:edus].to_i,
+      :edu_alg     => task_params[:edu_alg],
+      :risk_flood  => task_params[:risk_flood],
+      :flood_quota => task_params[:flood_quota]
     )
     center_lon = (conf[:left] + conf[:right]) / 2
     center_lat = (conf[:bottom] + conf[:top]) / 2
-    
+
     # PoIs configuration
     conf[:pois_use_all] = task_params[:pois_use_all]
     conf[:pois_types][:amenity][:hospital]     = { :w => task_params[:w_hospital].to_i } if task_params[:poi_hospital].to_i == 1
     conf[:pois_types][:amenity][:fire_station] = { :w => task_params[:w_firedept].to_i } if task_params[:poi_firedept].to_i == 1
     conf[:pois_types][:amenity][:police]       = { :w => task_params[:w_police].to_i } if task_params[:poi_police].to_i == 1
     conf[:pois_types][:railway][:station]      = { :w => task_params[:w_metro].to_i } if task_params[:poi_metro].to_i == 1
-    
+
     # Task creation
     @task = Task.create!({
       user_id: current_user.id,
