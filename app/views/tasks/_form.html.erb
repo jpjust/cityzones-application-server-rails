@@ -49,7 +49,7 @@
         <div class="mapform_inner_horizontal">
           <div>
             <%= f.label :flood_quota, 'Flood quota:' %>
-            <%= f.number_field :flood_quota, { :value => 0, :in => 0..100 } %>m
+            <%= f.number_field :flood_quota, { :step => 0.01, :value => 0, :in => 0..100 } %>m
           </div>
         </div>
 
