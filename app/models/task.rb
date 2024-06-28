@@ -39,7 +39,7 @@ class Task < ApplicationRecord
     request_exp = Time.now - ENV['TASK_REQ_EXP'].to_i.minutes
     return self.requested_at < request_exp
   end
-  
+
   def failed?
     self.expired? && self.requests >= ENV['TASK_REQ_MAX'].to_i
   end

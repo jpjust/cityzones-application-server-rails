@@ -4,7 +4,7 @@ class TasksController < ApplicationController
   include ResultsHelper
 
   before_action :authorize
-  
+
   def index
     @tasks = Task.where(user_id: current_user.id).includes(:result)
   end
