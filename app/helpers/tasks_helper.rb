@@ -21,7 +21,7 @@ module TasksHelper
   end
 
   # Generate a JSON configuration for the riskzones rool.
-  def make_config_file(options = { :polygon => [], :zl => 30, :edus => 300, :edu_alg => :none, :risk_flood => false, :flood_quota => 0 })
+  def make_config_file(options = { :polygon => [], :zl => 30, :edus => 300, :edu_alg => :none, :risk_flood => false, :flood_level => 0 })
     timestamp = Time.now.strftime('%Y%m%d%H%M%S%N')
     base_filename = "task_#{timestamp}"
 
@@ -73,7 +73,7 @@ module TasksHelper
 
     # Flood risk assessment
     if options[:risk_flood]
-      base_conf[:flood_quota] = options[:flood_quota].to_i
+      base_conf[:flood_level] = options[:flood_level].to_i
       base_conf[:output_rivers] = "#{base_filename}_rivers.csv"
       base_conf[:output_elevation] = "#{base_filename}_elevation.csv"
       base_conf[:output_slope] = "#{base_filename}_slope.csv"
@@ -92,7 +92,7 @@ module TasksHelper
       :edus        => task_params[:edus].to_i,
       :edu_alg     => task_params[:edu_alg],
       :risk_flood  => task_params[:risk_flood],
-      :flood_quota => task_params[:flood_quota]
+      :flood_level => task_params[:flood_level]
     )
     center_lon = (conf[:left] + conf[:right]) / 2
     center_lat = (conf[:bottom] + conf[:top]) / 2

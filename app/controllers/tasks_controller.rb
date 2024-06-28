@@ -67,7 +67,7 @@ class TasksController < ApplicationController
   def task_params
     params.require(:task).permit(:polygon, :lat, :lon, :zl, :pois_use_all, :poi_hospital, :w_hospital, :poi_firedept, :w_firedept,
                                  :poi_police, :w_police, :poi_metro, :w_metro, :edus, :edu_alg, :description, :geojson_file,
-                                 :risk_flood, :flood_quota)
+                                 :risk_flood, :flood_level)
   end
 
 end
