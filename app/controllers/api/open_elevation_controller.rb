@@ -21,7 +21,7 @@ class Api::OpenElevationController < ApplicationController
         render :json => {}, :status => 502
       end
     rescue EOFError
-      render :json => res.body
+      render :json => { :results => [] }
     rescue Timeout::Error, SocketError, Errno::ECONNREFUSED, Errno::ECONNRESET
       render :json => {}, :status => 500
     end
