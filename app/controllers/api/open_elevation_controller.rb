@@ -9,7 +9,8 @@ class Api::OpenElevationController < ApplicationController
   def lookup
     http = Net::HTTP.new('localhost', 8080)
     headers = {
-      'Content-type': 'application/json'
+      'Content-type': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (Linux) CityZones/2.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
     }
 
     begin
@@ -19,6 +20,8 @@ class Api::OpenElevationController < ApplicationController
       else
         render :json => {}, :status => 502
       end
+    rescue EOFError
+      render :json => { :results => [] }
     rescue Timeout::Error, SocketError, Errno::ECONNREFUSED, Errno::ECONNRESET
       render :json => {}, :status => 500
     end
