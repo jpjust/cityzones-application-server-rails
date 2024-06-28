@@ -168,14 +168,13 @@
 <script>
   task_lat = parseFloat(document.getElementById('task_lat').value);
   task_lon = parseFloat(document.getElementById('task_lon').value);
-  map = L.map('map').setView([task_lat, task_lon], 6);
   markers = [];
   polpoints = [];
   html_polygon = document.getElementById('task_polygon');
-
   polygon = null;
   closed = false;
 
+  map = L.map('map', { renderer: L.canvas() }).setView([task_lat, task_lon], 6);
   tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://cityzones.just.pro.br">CityZones</a>'
@@ -185,7 +184,7 @@
   html_polpoints = eval(html_polygon.value);
   if (html_polpoints.length > 0) {
     html_polpoints.forEach((value, index, array) => {
-      addpoint(value[1], value[0]);
+      addpoint(value[1], value[0], false);
     });
 
     createpolygon();
@@ -197,7 +196,7 @@
    *
    *  Adds a new polygon point to the set and a marker on the map.
    */
-  function addpoint(lat, lon) {
+  function addpoint(lat, lon, draw_marker) {
     // If the polygon is already closed, we don't allow more points
     if (closed == true) {
       return;
@@ -210,8 +209,10 @@
     });
 
     // Creates a marker
-    let marker = L.marker([lat, lon]).addTo(map);
-    markers.push(marker);
+    if (draw_marker) {
+      let marker = L.marker([lat, lon]).addTo(map);
+      markers.push(marker);
+    }
   }
 
   function createpolygon() {
@@ -278,7 +279,7 @@
    *  for AoI selection.
    */
   function onMapClick(e) {
-    addpoint(e.latlng['lat'], e.latlng['lng']);
+    addpoint(e.latlng['lat'], e.latlng['lng'], true);
 
     // The first marker gets a click event to close the polygon
     if (markers.length == 1) {
