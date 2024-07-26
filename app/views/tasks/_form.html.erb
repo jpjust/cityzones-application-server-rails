@@ -2,100 +2,104 @@
   <div id="map"></div>
 
   <div class="maptools">
-    <%= form_with model: @task, data: { turbo: false } do |f| %>
-      <p style="text-align: center;"><strong>Select AoI from GeoJSON</strong></p>
-      <div class="mapform_inner">
-        <%= f.file_field :geojson_file %>
-        <%= f.submit 'Send GeoJSON' %>
-      </div>
-    <% end %>
-
-    <p style="text-align: center;"><strong>AoI marking</strong></p>
-
-    <%= form_with model: @task do |f| %>
-      <%= f.hidden_field :polygon %>
-      <%= f.hidden_field :lat %>
-      <%= f.hidden_field :lon %>
-
-      <div class="mapform_inner">
-        <%= button_tag 'Clear last marker', { :type => :button, :onclick => 'clearlastmarker();' } %>
-        <%= button_tag 'Clear map',         { :type => :button, :onclick => 'clearmap();', :class => :button_alert } %>
-        <%= f.label :country, 'Find country:' %>
-        <%= f.collection_select :country, Country.order(:name), :coord, :name, { :prompt => true }, { :onchange => 'changeCountry();' } %>
-      </div>
-
-      <p style="text-align: center;"><strong>Settings</strong></p>
-
-      <div class="mapform mapform_inner">
-        <div class="mapform_inner_horizontal">
-          <%= f.label :zl, 'Zone lenght (zl):' %>
-          <%= f.number_field :zl, { :value => 90, :in => 10..100, :required => true } %>
+    <div class="mapform mapform_inner" id="task_settings">
+      <%= form_with model: @task, data: { turbo: false } do |f| %>
+        <p style="text-align: center;"><strong>Select AoI from GeoJSON</strong></p>
+        <div class="mapform_inner">
+          <%= f.file_field :geojson_file %>
+          <%= f.submit 'Send GeoJSON' %>
         </div>
+      <% end %>
 
-        <div class="mapform_inner_horizontal">
-          <div>
-            <%= f.check_box :pois_use_all %>
-            <%= f.label :pois_use_all, 'Consider PoIs outside AoI' %>
+      <p style="text-align: center;"><strong>AoI marking</strong></p>
+
+      <%= form_with model: @task do |f| %>
+        <%= f.hidden_field :polygon %>
+        <%= f.hidden_field :lat %>
+        <%= f.hidden_field :lon %>
+
+        <div class="mapform_inner">
+          <%= button_tag 'Clear last marker', { :type => :button, :onclick => 'clearlastmarker();' } %>
+          <%= button_tag 'Clear map',         { :type => :button, :onclick => 'clearmap();', :class => :button_alert } %>
+          <%= f.label :country, 'Find country:' %>
+          <%= f.collection_select :country, Country.order(:name), :coord, :name, { :prompt => true }, { :onchange => 'changeCountry();' } %>
+
+          <div class="mapform_inner_horizontal">
+            <%= f.label :zl, 'Zone lenght (zl):' %>
+            <%= f.number_field :zl, { :value => 90, :in => 10..100, :required => true } %>
           </div>
         </div>
 
-        <div class="mapform_inner_horizontal">
-          <div>
-            <%= f.check_box :risk_flood %>
-            <%= f.label :risk_flood, 'Enable flood risk assessment' %>
+        <div class="mapform_inner" style="background-color: #8888FF; ">
+          <p style="text-align: center;"><strong>Flood layer</strong></p>
+
+          <div class="mapform_inner_horizontal">
+            <div>
+              <%= f.check_box :risk_flood %>
+              <%= f.label :risk_flood, 'Enable flood risk assessment' %>
+            </div>
+          </div>
+
+          <div class="mapform_inner_horizontal">
+            <div>
+              <%= f.label :flood_level, 'Flood level:' %>
+              <%= f.number_field :flood_level, { :step => 0.01, :value => 0, :in => 0..100 } %>m
+            </div>
           </div>
         </div>
 
-        <div class="mapform_inner_horizontal">
-          <div>
-            <%= f.label :flood_level, 'Flood level:' %>
-            <%= f.number_field :flood_level, { :step => 0.01, :value => 0, :in => 0..100 } %>m
-          </div>
-        </div>
+        <div class="mapform_inner" style="background-color: #FFFF88; ">
+          <p style="text-align: center;"><strong>Mitigation layer</strong></p>
 
-        <p style="text-align: center;"><strong>Points of Interest (PoIs)</strong></p>
+          <div class="mapform_inner_horizontal">
+            <div>
+              <%= f.check_box :pois_use_all %>
+              <%= f.label :pois_use_all, 'Consider PoIs outside AoI' %>
+            </div>
+          </div>
 
-        <div class="mapform_inner_horizontal">
-          <div>
-            <%= f.check_box :poi_hospital, { :checked => true } %>
-            <%= f.label :poi_hospital, 'Hospitals' %>
+          <div class="mapform_inner_horizontal">
+            <div>
+              <%= f.check_box :poi_hospital, { :checked => true } %>
+              <%= f.label :poi_hospital, 'Hospitals' %>
+            </div>
+            <div>
+              <%= f.label :w_hospital, 'f(p):' %>
+              <%= f.number_field :w_hospital, { :value => 10, :in => 1..99, :required => true } %>
+            </div>
           </div>
-          <div>
-            <%= f.label :w_hospital, 'f(p):' %>
-            <%= f.number_field :w_hospital, { :value => 10, :in => 1..99, :required => true } %>
-          </div>
-        </div>
 
-        <div class="mapform_inner_horizontal">
-          <div>
-            <%= f.check_box :poi_firedept, { :checked => true } %>
-            <%= f.label :poi_firedept, 'Fire Stations' %>
+          <div class="mapform_inner_horizontal">
+            <div>
+              <%= f.check_box :poi_firedept, { :checked => true } %>
+              <%= f.label :poi_firedept, 'Fire Stations' %>
+            </div>
+            <div>
+              <%= f.label :w_firedept, 'f(p):' %>
+              <%= f.number_field :w_firedept, { :value => 5, :in => 1..99, :required => true } %>
+            </div>
           </div>
-          <div>
-            <%= f.label :w_firedept, 'f(p):' %>
-            <%= f.number_field :w_firedept, { :value => 5, :in => 1..99, :required => true } %>
-          </div>
-        </div>
 
-        <div class="mapform_inner_horizontal">
-          <div>
-            <%= f.check_box :poi_police, { :checked => true } %>
-            <%= f.label :poi_police, 'Police Stations' %>
+          <div class="mapform_inner_horizontal">
+            <div>
+              <%= f.check_box :poi_police, { :checked => true } %>
+              <%= f.label :poi_police, 'Police Stations' %>
+            </div>
+            <div>
+              <%= f.label :w_police, 'f(p):' %>
+              <%= f.number_field :w_police, { :value => 2, :in => 1..99, :required => true } %>
+            </div>
           </div>
-          <div>
-            <%= f.label :w_police, 'f(p):' %>
-            <%= f.number_field :w_police, { :value => 2, :in => 1..99, :required => true } %>
-          </div>
-        </div>
 
-        <div class="mapform_inner_horizontal">
-          <div>
-            <%= f.check_box :poi_metro %>
-            <%= f.label :poi_metro, 'Metro Stations' %>
-          </div>
-          <div>
-            <%= f.label :w_metro, 'f(p):' %>
-            <%= f.number_field :w_metro, { :value => 1, :in => 1..99, :required => true } %>
+          <div class="mapform_inner_horizontal">
+            <div>
+              <%= f.check_box :poi_metro %>
+              <%= f.label :poi_metro, 'Metro Stations' %>
+            </div>
+            <div>
+              <%= f.label :w_metro, 'f(p):' %>
+              <%= f.number_field :w_metro, { :value => 1, :in => 1..99, :required => true } %>
+            </div>
           </div>
         </div>
 
@@ -157,7 +161,7 @@
         </div>
       </div>
 
-      <div class="mapform_inner">
+      <div class="mapform_inner" id="div_submit">
         <%= f.submit 'Submit task', { :class => :button_default } %>
       </div>
     <% end %>
@@ -190,6 +194,10 @@
     createpolygon();
     map.fitBounds(polygon.getBounds());
   }
+
+  // Adjust settings panel height
+  const panel_height = document.getElementById('map').clientHeight - document.getElementById('div_submit').offsetHeight - 12;
+  task_settings.style.height = `${panel_height}px`;
 
   /**
    *  Add polygon point function.

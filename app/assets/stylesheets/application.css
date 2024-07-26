@@ -99,7 +99,7 @@ body {
 }
 
 #map {
-  height: calc(100% - 2px);
+  /* height: calc(100% - 2px); */
   flex-grow: 1;
   margin-right: 5px;
   border: 1px black solid;
@@ -118,7 +118,7 @@ body {
 
 .mapform {
   overflow-y: scroll;
-  height: 50vh;
+  height: 0px;
 }
 
 .mapform_inner {
