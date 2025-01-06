@@ -14,6 +14,7 @@ let html_polygon = null;
 let polygon = null;
 let closed = false;
 let html_polpoints = [];
+let panel_height = null;
 
 // Variables for results list
 let marker = null;
