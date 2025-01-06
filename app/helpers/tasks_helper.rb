@@ -72,7 +72,7 @@ module TasksHelper
     }
 
     # Flood risk assessment
-    if options[:risk_flood]
+    if options[:risk_flood].to_i == 1
       base_conf[:flood_level] = options[:flood_level].to_i
       base_conf[:output_rivers] = "#{base_filename}_rivers.csv"
       base_conf[:output_elevation] = "#{base_filename}_elevation.csv"
