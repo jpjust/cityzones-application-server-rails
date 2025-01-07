@@ -24,6 +24,9 @@ module CityzonesApplicationServerRails
       html_tag.html_safe
     }
 
+    # Não desativa os botões de submit
+    config.action_view.automatically_disable_submit_tag = false
+
     RGeo::ActiveRecord::SpatialFactoryStore.instance.tap do |config|
       # By default, use the GEOS implementation for spatial columns.
       config.default = RGeo::Geos.factory
