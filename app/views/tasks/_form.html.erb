@@ -159,12 +159,12 @@
         <div class="mapform_inner_horizontal" style="justify-content: center;">
           <%= f.text_area :description, { :size => '30x5', :required => true } %>
         </div>
-      </div>
 
-      <div class="mapform_inner" id="div_submit">
-        <%= f.submit 'Submit task', { :class => :button_default } %>
-      </div>
-    <% end %>
+        <div class="mapform_inner" id="div_submit">
+          <%= f.submit 'Submit task', { :class => :button_default } %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
 </div>
@@ -196,7 +196,7 @@
   }
 
   // Adjust settings panel height
-  panel_height = document.getElementById('map').clientHeight - document.getElementById('div_submit').offsetHeight - 12;
+  panel_height = document.getElementById('map').clientHeight - 12;
   task_settings.style.height = `${panel_height}px`;
 
   /**
